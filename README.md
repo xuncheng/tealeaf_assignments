@@ -4,3 +4,4 @@
 
 * Calculator App
 * Ruby Exercises
+* Blackjack Game
