@@ -23,6 +23,13 @@ def calculate_total(cards)
   total
 end
 
+def show_dealer_cards(dealercards, dealertotal)
+  puts "=> ------ Dealer's cards: ------"
+  puts "=> Dealer's first card is: #{dealercards[0][1]} of #{dealercards[0][0]}"
+  puts "=> Dealer's second card is: #{dealercards[1][1]} of #{dealercards[1][0]}"
+  puts "=> Dealer's total is #{dealertotal}"
+end
+
 puts "Welcome to Blackjack!"
 puts "=> ------ Game Start ------"
 
@@ -38,7 +45,7 @@ while game_continued
   game_over = false
   hands_total = player_won_total + player_lost_total + tie_total
   if hands_total % 10 == 0
-    puts "==> ...Bring new cards..." if hands_total != 0
+    puts "=> ...Bring new cards..." if hands_total != 0
     deck = suits.product(cards) * 4 # four is packs of cards quantity
     deck.shuffle!
   end
@@ -79,10 +86,7 @@ while game_continued
     player_won_total += 1
     puts ""
     puts "**** Congratulation! You has hit blackjack. You Win! ****"
-    puts "=> ------ Dealer's cards: ------"
-    puts "=> Dealer's first card is: #{dealercards[0][1]} of #{dealercards[0][0]}"
-    puts "=> Dealer's second card is: #{dealercards[1][1]} of #{dealercards[1][0]}"
-    puts "=> Dealer's total is #{dealertotal}"
+    show_dealer_cards(dealercards, dealertotal)
   end
 
   while mytotal < 21 && !game_over
@@ -99,25 +103,16 @@ while game_continued
         game_over = true
         player_won_total += 1
         puts "**** Congratulation! You has hit blackjack. You win! ****"
-        puts "=> ------ Dealer's cards: ------"
-        puts "=> Dealer's first card is: #{dealercards[0][1]} of #{dealercards[0][0]}"
-        puts "=> Dealer's second card is: #{dealercards[1][1]} of #{dealercards[1][0]}"
-        puts "=> Dealer's total is #{dealertotal}"
+        show_dealer_cards(dealercards, dealertotal)
       elsif mytotal > 21
         game_over = true
         player_lost_total += 1
         puts "**** Oh, you busted! Your total is #{mytotal}. ****"
-        puts "=> ------ Dealer's cards: ------"
-        puts "=> Dealer's first card is: #{dealercards[0][1]} of #{dealercards[0][0]}"
-        puts "=> Dealer's second card is: #{dealercards[1][1]} of #{dealercards[1][0]}"
-        puts "=> Dealer's total is #{dealertotal}"
+        show_dealer_cards(dealercards, dealertotal)
       end
     elsif hit_or_stay == '2'
       puts "**** You choose stay! Your total is #{mytotal}"
-      puts "=> ------ Dealer's cards: ------"
-      puts "=> Dealer's first card is: #{dealercards[0][1]} of #{dealercards[0][0]}"
-      puts "=> Dealer's second card is: #{dealercards[1][1]} of #{dealercards[1][0]}"
-      puts "=> Dealer's total is #{dealertotal}"
+      show_dealer_cards(dealercards, dealertotal)
       break
     else
       puts "Oh, error command! You must enter 1) hit 2) stay."
