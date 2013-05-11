@@ -1,17 +1,17 @@
 # Interactive command line blackjack game.
 
-def calculate_total(cards)
-  # [['Hearts', '3'], ['Spades', 'Jack'], ...]
-  arr = cards.map { |e| e[1] }
+def calculate_total(cards) 
+  # [['Hearts', '2'], ['Spades', 'Jack'], ...]
   total = 0
+  arr = cards.map { |e| e[1] }
 
-  arr.each do |value|
-    if value == "Ace"
+  arr.each do |card|
+    if card == "Ace"
       total += 11
-    elsif value.to_i == 0 # Jack, Queen, King
+    elsif card.to_i == 0 # Jack, Queen, King
       total += 10
     else
-      total += value.to_i
+      total += card.to_i
     end
   end
 
@@ -23,143 +23,151 @@ def calculate_total(cards)
   total
 end
 
-def show_dealer_cards(dealercards, dealertotal)
-  puts "=> ------ Dealer's cards: ------"
-  puts "=> Dealer's first card is: #{dealercards[0][1]} of #{dealercards[0][0]}"
-  puts "=> Dealer's second card is: #{dealercards[1][1]} of #{dealercards[1][0]}"
-  puts "=> Dealer's total is #{dealertotal}"
+def create_deck(number_of_decks)
+  suits = ['Hearts', 'Diamonds', 'Spades', 'Club']
+  cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queue', 'King', 'Ace']
+
+  deck = suits.product(cards) * number_of_decks
+  deck.shuffle!
 end
 
 puts "Welcome to Blackjack!"
-puts "=> ------ Game Start ------"
+print "First, tell me what your name is? "
+name = gets.chomp.downcase.capitalize
 
-suits = ['Hearts', 'Diamonds', 'Spades', 'Club']
-cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
+puts "Hello #{name}, welcome to Blackjack world! "
+puts ""
 
+deck = create_deck(4)
 game_continued = true
-player_won_total = 0
-player_lost_total = 0
-tie_total = 0
 
 while game_continued
-  game_over = false
-  hands_total = player_won_total + player_lost_total + tie_total
-  if hands_total % 10 == 0
-    puts "=> ...Bring new cards..." if hands_total != 0
-    deck = suits.product(cards) * 4 # four is packs of cards quantity
-    deck.shuffle!
+  if deck.count < 52
+    puts "=> Shuffling the deck..."
+    deck = create_deck(4)
+    sleep(1)
   end
 
   # Deal Cards
+  winner = nil
+  player_cards = []
+  dealer_cards = []
 
-  puts "=> Dealing cards..."
-  mycards = []
-  dealercards = []
-
-  mycards << deck.pop
-  dealercards << deck.pop
-  mycards << deck.pop
-  dealercards << deck.pop
+  player_cards << deck.pop
+  dealer_cards << deck.pop
+  player_cards << deck.pop
+  dealer_cards << deck.pop
 
   puts "=> Cards dealt. There are now #{deck.count} cards in the deck."
 
-  dealertotal = calculate_total(dealercards)
-  mytotal = calculate_total(mycards)
+  dealer_total = calculate_total(dealer_cards)
+  player_total = calculate_total(player_cards)
 
-  # Show Cardd
+  # Show Cards
+  puts "=> Dealer is showing '#{dealer_cards[1].reverse.join(' of ')}'"
 
-  puts ""
-  puts "=> ------ Dealer's cards: ------"
-  puts "=> Dealer's first card is hidden."
-  puts "=> Dealer's second card is: #{dealercards[1][1]} of #{dealercards[1][0]}"
+  print "=> You have: '#{player_cards[0].reverse.join(' of ')}' and '#{player_cards[1].reverse.join(' of ')}'"
+  puts ", for a total of: #{player_total}"
 
-  puts ""
-  puts "=> ------ Your cards ------"
-  puts "=> Your first card is: #{mycards[0][1]} of #{mycards[0][0]}"
-  puts "=> Your second card is: #{mycards[1][1]} of #{mycards[1][0]}"
-  puts "=> Your total is #{mytotal}"
-
-  # Player
-
-  if mytotal == 21
-    game_over = true
-    player_won_total += 1
-    puts ""
-    puts "**** Congratulation! You has hit blackjack. You Win! ****"
-    show_dealer_cards(dealercards, dealertotal)
+  # player turn
+  if player_total == dealer_total && player_total == 21
+    puts "**** Oh, you and dealer have hit blackjack. It's tie! ****"
+    winner = "NIL"
+  elsif player_total == 21
+    puts "**** Congratulations! You has hit blackjack. You win! ****"
+    winner = "PLAYER"
+  elsif dealer_total == 21
+    puts "**** Sorry #{name}, dealer has hit blackjack. You lose! *****"
+    winner = "DEALER"
   end
 
-  while mytotal < 21 && !game_over
+  while player_total < 21
     puts ""
-    puts "What would you like to do? 1) hit 2) stay"
+    print "What would you like to do 1) hit 2) stay ? "
     hit_or_stay = gets.chomp
-    if hit_or_stay == '1'
-      mycards << deck.pop
-      puts "=> There are now #{deck.count} cards in the deck."
-      puts "=> You drew #{mycards.last[1]} of #{mycards.last[0]}"
-      mytotal = calculate_total(mycards)
-      puts "=> Your total is #{mytotal}"
-      if mytotal == 21
-        game_over = true
-        player_won_total += 1
-        puts "**** Congratulation! You has hit blackjack. You win! ****"
-        show_dealer_cards(dealercards, dealertotal)
-      elsif mytotal > 21
-        game_over = true
-        player_lost_total += 1
-        puts "**** Oh, you busted! Your total is #{mytotal}. ****"
-        show_dealer_cards(dealercards, dealertotal)
-      end
-    elsif hit_or_stay == '2'
-      puts "**** You choose stay! Your total is #{mytotal}"
-      show_dealer_cards(dealercards, dealertotal)
+
+    if !['1', '2'].include?(hit_or_stay)
+      puts "Error: You must enter 1 or 2"
+      next
+    end
+
+    if hit_or_stay == '2'
+      puts "You choose stay! You total is #{player_total}"
       break
-    else
-      puts "Oh, error command! You must enter 1) hit 2) stay."
     end
-  end
 
-  # Dealer
-
-  while dealertotal < 17 && !game_over
-    puts ""
-    dealercards << deck.pop
+    # hit
+    new_card = deck.pop
     puts "=> There are now #{deck.count} cards in the deck."
-    puts "=> Dealer drew #{dealercards.last[1]} of #{dealercards.last[0]}"
-    dealertotal = calculate_total(dealercards)
-    puts "=> Dealer's total is #{dealertotal}"
-    if dealertotal == 21
-      game_over = true
-      player_lost_total += 1
-      puts ""
-      puts "**** Wow! Dealer has hit blackjack. You lost! ****"
-    elsif dealertotal > 21
-      game_over = true
-      player_won_total += 1
-      puts ""
-      puts "**** Oh, dealer busted! Dealer's total is #{dealertotal}. ****"
+    puts "=> Dealing new card to you: '#{new_card.reverse.join(' of ')}'"
+    player_cards << new_card
+    player_total = calculate_total(player_cards)
+    puts "=> You total is now: #{player_total}"
+
+    if player_total == 21
+      puts "**** Congratulations! You has hit blackjack. You win! ****"
+      winner = "PLAYER"
+    elsif player_total > 21
+      puts "**** Sorry #{name}, you busted. You lose! ****"
+      winner = "DEALER"
     end
   end
 
-  # Compare
-
-  if !game_over
+  # Show dealer's cards
+  if !winner
     puts ""
-    if mytotal > dealertotal
-      player_won_total += 1
-      puts "**** You win! Your total is #{mytotal}, Dealer's total is #{dealertotal}. ****"
-    elsif mytotal == dealertotal
-      tie_total += 1
-      puts "**** Oh, you and dealer have the same point: #{mytotal}, it's a tie! ****"
-    elsif mytotal < dealertotal
-      player_lost_total += 1
-      puts "**** You lost! Your total is #{mytotal}, Dealer's total is #{dealertotal}. ****"
+    print "=> Dealer has: '#{dealer_cards[0].reverse.join(' of ')}' and '#{dealer_cards[1].reverse.join(' of ')}'"
+    puts ", for a total of: #{dealer_total}"
+  end
+
+  # Dealer turn
+  if dealer_total == 21
+    puts "**** Sorry #{name}, dealer has hit blackjack. You lose! ****"
+    winner = "DEALER"
+  end
+
+  while !winner && dealer_total < 17 # auto hit
+    puts ""
+    puts "=> Dealer auto hits..."
+    new_card = deck.pop
+    puts "=> There are now #{deck.count} cards in the deck."
+    puts "=> Dealing new card for Dealer '#{new_card.reverse.join(' of ')}'"
+    dealer_cards << new_card
+    dealer_total = calculate_total(dealer_cards)
+    puts "=> Dealer total is now: #{dealer_total}"
+
+    if dealer_total == 21
+      puts "**** Sorry #{name}, dealer has hit blackjack. You lose! ****"
+      winner = "DEALER"
+    elsif dealer_total > 21
+      puts "**** Congratulations, dealer has busted. You win! ****"
+      winner = "PLAYER"
+    end
+  end
+
+  # Compare hands
+  if !winner
+    puts ""
+    print "=> Dealer's Cards: "
+    dealer_cards.each { |card| print "'#{card.reverse.join(' of ')}' " }
+    puts ""
+    print "=> Your Cards: "
+    player_cards.each { |card| print "'#{card.reverse.join(' of ')}' "}
+    puts ""
+    if player_total > dealer_total
+      puts "**** Congratulations, you win! ****"
+    elsif player_total < dealer_total
+      puts "**** Sorry #{name}, you lose! ****"
+    else
+      puts "**** Oh, you and dealer have equal totals of #{player_total}. It's tie! ****"
     end
   end
 
   puts ""
-  puts "So far, you have played #{player_won_total + player_lost_total + tie_total} hands, won #{player_won_total} hands, lost #{player_lost_total} hands and tie #{tie_total} hands."
   print "Would you like to play again[Y/n]?"
   game_continued = false if gets.chomp.upcase[0] != 'Y'
 end
+
+puts ""
+puts "Goodbye #{name}, thanks for playing!"
 
