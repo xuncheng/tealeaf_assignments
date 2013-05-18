@@ -5,3 +5,4 @@
 * Calculator App
 * Ruby Exercises
 * Blackjack Game
+* OO Blackjack Game
