@@ -1,17 +1,15 @@
-require_relative 'shared_function'
+require_relative 'hand'
 
 class Dealer
-  include SharedFunction
-  attr_accessor :cards
+  include Hand
+  attr_accessor :name, :cards
+
   def initialize
+    @name = "Dealer"
     @cards = []
   end
 
-  def add_card(new_card)
-    cards << new_card
-  end
-
-  def show_cards
-    cards.join(', ')
+  def show_flop
+    puts "=> Dealer is showing '#{cards[1]}'."
   end
 end

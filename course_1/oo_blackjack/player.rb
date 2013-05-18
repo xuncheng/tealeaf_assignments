@@ -1,18 +1,15 @@
-require_relative 'shared_function'
+require_relative 'hand'
 
 class Player
-  include SharedFunction
-  attr_reader :name, :cards
+  include Hand
+  attr_accessor :name, :cards
+
   def initialize(name)
     @name = name
     @cards = []
   end
 
-  def add_card(new_card)
-    cards << new_card
-  end
-
-  def show_cards
-    cards.join(', ')
+  def show_flop
+    puts "=> You have: '#{cards[0]}' and '#{cards[1]}', for a total of : #{total}"
   end
 end

@@ -1,5 +1,11 @@
-module SharedFunction
-  def calculate_total
+module Hand
+  def show_hand
+    print "=> #{name}'s Cards: #{cards.join(', ')}"
+    puts ""
+  end
+
+  def total
+    # [['Hearts', '2'], ['Spades', 'Jack'], ...]
     total = 0
     faces = cards.map { |card| card.face }
 
@@ -13,11 +19,14 @@ module SharedFunction
       end
     end
 
-    # correct for Aces
-    faces.select { |e| e == "Ace" }.count.times do
-      total -= 10 if total > 21
-    end
-
     total
+  end
+
+  def add_card(new_card)
+    cards << new_card
+  end
+
+  def is_busted?
+    total > 21
   end
 end

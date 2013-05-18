@@ -6,6 +6,6 @@ class Card
   end
 
   def to_s
-    "'#{face} of #{suit}'"
+    "#{face} of #{suit}"
   end
 end

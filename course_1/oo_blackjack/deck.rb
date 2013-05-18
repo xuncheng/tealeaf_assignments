@@ -1,29 +1,30 @@
-class Deck
-  attr_accessor :cards
-  def initialize(number_of_decks=1)
-    @cards = []
-    init_cards(number_of_decks)
-  end
+require_relative 'card'
 
-  def count
-    cards.count
+class Deck
+  attr_reader :cards
+
+  def initialize
+    @cards = []
+    init_cards
   end
 
   def deal_one
     cards.pop
   end
 
+  def count
+    cards.count
+  end
+
   private
-  def init_cards(number_of_decks)
+  def init_cards
     suits = ['Hearts', 'Diamonds', 'Spades', 'Club']
-    faces = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queue', 'King', 'Ace']
-    number_of_decks.times do
-      suits.each do |suit|
-        faces.each do |face|
-          @cards << Card.new(suit, face)
-        end
+    faces = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
+    suits.each do |suit|
+      faces.each do |face|
+        @cards << Card.new(suit, face)
       end
     end
-    @cards.shuffle!
+    cards.shuffle!
   end
 end
