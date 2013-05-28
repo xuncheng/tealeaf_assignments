@@ -25,7 +25,7 @@ end
 
 def create_deck(number_of_decks)
   suits = ['Hearts', 'Diamonds', 'Spades', 'Club']
-  cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queue', 'King', 'Ace']
+  cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
 
   deck = suits.product(cards) * number_of_decks
   deck.shuffle!
